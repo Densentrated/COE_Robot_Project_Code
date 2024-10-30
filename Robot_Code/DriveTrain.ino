@@ -1,8 +1,7 @@
-class DriveTrain(Motor lm, Motor rm) {
+
+class DriveTrain {
   public: 
-    Motor leftMotor = lm;
-    Motor RightMotor = rm;
-    int timeToDistance = 1;
+    DriveTrain(Motor& lm, Motor& rm) : leftMotor(lm), rightMotor(rm) {}
 
     void moveForward(int distance) {
         // move one motor forward
@@ -18,4 +17,8 @@ class DriveTrain(Motor lm, Motor rm) {
         // move one motor forward
         rightMotor.rotate(distance * timeToDistance, true);
     }
-}
+  private: 
+    Motor leftMotor;
+    Motor rightMotor;
+    int timeToDistance = 1;
+};
