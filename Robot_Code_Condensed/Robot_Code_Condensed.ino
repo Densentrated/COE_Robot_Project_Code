@@ -10,22 +10,26 @@ class Motor{
       takes an int [durration] in ms and a boolean direction
       and rotates the motor for that many seconds
     **/
-    void rotate(bool direction, int power) {
-      if (direction) {
-        digitalWrite(controlPin0, HIGH);                    
-        digitalWrite(controlPin1, LOW);
-        analogWrite(pwmPin, power);  
-      } else {
-        digitalWrite(controlPin0, LOW);                    
-        digitalWrite(controlPin1, HIGH);                         
-        analogWrite(pwmPin, power);              
-      }
+  void rotate(bool direction, int power) {
+    if (direction) {
+      digitalWrite(controlPin0, HIGH);                    
+      digitalWrite(controlPin1, LOW);
+      analogWrite(pwmPin, power);  
+    } else {
+      digitalWrite(controlPin0, LOW);                    
+      digitalWrite(controlPin1, HIGH);                         
+      analogWrite(pwmPin, power);              
+    }
   }
 
   void stop() {
     digitalWrite(controlPin0, LOW);                      
     digitalWrite(controlPin1, LOW);                   
     analogWrite(pwmPin, 0);            
+  }
+
+  void decelerateToZero() {
+
   }
 
   private:
@@ -51,7 +55,6 @@ class DriveTrain {
         delay(distance);
         leftMotor.stop();
         rightMotor.stop();
-
     }
 
     void moveBackward(int distance) {
@@ -65,7 +68,7 @@ class DriveTrain {
     void stop() {
       leftMotor.stop();
       rightMotor.stop();
-      delay(500);
+      delay(1000);
     }
 };
 
