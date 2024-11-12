@@ -49,41 +49,49 @@ class DriveTrain {
         leftMotor.rotate( true, lPower);  
         rightMotor.rotate( true, rPower);
         delay(distance);
-        rightMotor.stop();
-        leftMotor.stop();
+        stop();
     }
 
     void moveBackward(int distance) {
         leftMotor.rotate(false, lPower);
         rightMotor.rotate(false, rPower);
         delay(distance);
-        leftMotor.stop();
-        rightMotor.stop();
+        stop();
     }
 
     void stop() {
       leftMotor.stop();
       rightMotor.stop();
-      delay(2500);
+      delay(1000);
     }
 
     void rotate90DegreesLeft() {
-      int timeToTurn = 625;
-      leftMotor.rotate(false, 100);
-      rightMotor.rotate(true, 100);
-      delay(timeToTurn);
-      stop();
-    }
-
-    void rotate90DegreesRight() {
-      int timeToTurn = 625;
+      int timeToTurn = 650;
       leftMotor.rotate(true, 100);
       rightMotor.rotate(false, 100);
       delay(timeToTurn);
       stop();
     }
 
-    void s
+    void rotate90DegreesRight() {
+      int timeToTurn = 650;
+      leftMotor.rotate(false, 100);
+      rightMotor.rotate(true, 100);
+      delay(timeToTurn);
+      stop();
+    }
+
+    /**
+      * Might not be needed, us used to counteract the fact that the left motor stops beore the right one
+    **/
+    void straighten() {
+      int timeToTurn = 25;
+      leftMotor.rotate(true, 80);
+      rightMotor.rotate(false, 80);
+      delay(timeToTurn);
+      stop();
+
+    }
 };
 
 // NEED TO IMPLEMENT ACTIVE PIN NUMBERS
@@ -99,23 +107,30 @@ int RM1 = 8;
 int RMPWM = 10;
 Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
+// ideal motor power ration is 215: 200
 DriveTrain robotDriveTrain(leftMotor, rightMotor, 215, 200);
+
+// setup for the button
+int buttonPin = 7;
  
 void setup()
 {
-
-
+  pinMode(buttonPin, INPUT);
 }
 
 void loop()
 {
-  
-  // forever loop so code only gets executed once
-  // move 36 in forward
-  robotDriveTrain.moveForward(2000);
-  // rotate left 90 degrees
-  // move 24 in forwward
-  // rotate right 90 degrees
-  // move 36 in forward
-  while(true) {}
+  if (digitalRead(buttonPin) == HIGH){
+    // forever loop so code only gets executed once
+    // move 36 in forward
+    robotDriveTrain.moveForward(2300);
+    // rotate left 90 degrees
+    robotDriveTrain.rotate90DegreesLeft();
+    // move 24 in forwward
+    robotDriveTrain.moveForward(1100);
+    // rotate right 90 degrees
+    robotDriveTrain.rotate90DegreesRight();
+    // move 36 in forward
+    robotDriveTrain.moveForward(2300);
+  }
 }
