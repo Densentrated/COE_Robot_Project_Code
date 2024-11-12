@@ -1,30 +1,9 @@
-class Motor
-{
-public:
-  /**
-   * Constructor for the Motor Class
-   * takes in the pin numbers that correspond to the pwm
-   * pin, and the control pins for that motor on the motor controller
-   */
-  Motor(int cp0, int cp1, int pp) : controlPin0(cp0), controlPin1(cp1), pwmPin(pp)
-  {
-    pinMode(controlPin0, OUTPUT);
-    pinMode(controlPin1, OUTPUT);
-    pinMode(pwmPin, OUTPUT);
-  }
-
-  /**
-    takes an boolean [direction], true is forward, false is backward
-    Takes an int [power] which corresponds to how fast the motor will rotate in that direction
-    and rotates the motor for that many seconds
-  **/
-  void rotate(bool direction, int power)
-  {
-    if (direction)
-    {
-      digitalWrite(controlPin0, HIGH);
-      digitalWrite(controlPin1, LOW);
-      analogWrite(pwmPin, power);
+class Motor{
+  public: 
+    Motor(int cp0, int cp1, int pp) : controlPin0(cp0), controlPin1(cp1), pwmPin(pp) {
+      pinMode(controlPin0, OUTPUT);
+      pinMode(controlPin1, OUTPUT);
+      pinMode(pwmPin, OUTPUT);
     }
 
     /**
@@ -43,14 +22,10 @@ public:
     }
   }
 
-  /**
-   * stops the motor inplace
-   */
-  void stop()
-  {
-    digitalWrite(controlPin0, LOW);
-    digitalWrite(controlPin1, LOW);
-    analogWrite(pwmPin, 0);
+  void stop() {
+    digitalWrite(controlPin0, LOW);                      
+    digitalWrite(controlPin1, LOW);                   
+    analogWrite(pwmPin, 0);            
   }
 
   void decelerateToZero() {
@@ -63,16 +38,15 @@ public:
     int pwmPin;
 };
 
-class DriveTrain
-{
-public:
-  Motor leftMotor;
-  Motor rightMotor;
-  int timeToDistance = 1;
-  int lPower;
-  int rPower;
+class DriveTrain {
+  public: 
+    Motor leftMotor;
+    Motor rightMotor;
+    int timeToDistance = 1;
+    int lPower;
+    int rPower;
 
-  DriveTrain(Motor &lm, Motor &rm, int lPower, int rPower) : leftMotor(lm), rightMotor(rm), lPower(lPower), rPower(rPower) {}
+    DriveTrain(Motor& lm, Motor& rm, int lPower, int rPower) : leftMotor(lm), rightMotor(rm), lPower(lPower), rPower(rPower) {}
 
     void moveForward(int distance) {
         // move one motor forward
@@ -83,19 +57,13 @@ public:
         rightMotor.stop();
     }
 
-  /**
-   *   Moves the drivetrain an int [distance] backward
-   *   this hasn't been fully implemented yet, so it moves the robot
-   *   forward for [distance] ammount of milliseconds
-   */
-  void moveBackward(int distance)
-  {
-    leftMotor.rotate(false, lPower);
-    rightMotor.rotate(false, rPower);
-    delay(distance);
-    leftMotor.stop();
-    rightMotor.stop();
-  }
+    void moveBackward(int distance) {
+        leftMotor.rotate(false, lPower);
+        rightMotor.rotate(false, rPower);
+        delay(distance);
+        leftMotor.stop();
+        rightMotor.stop();
+    }
 
     void stop() {
       leftMotor.stop();
@@ -104,10 +72,12 @@ public:
     }
 };
 
+// NEED TO IMPLEMENT ACTIVE PIN NUMBERS
 // setup for left motor
+// Wires Need To Be Switched
 int LM0 = 12;
 int LM1 = 13;
-int LMPWM = 11;
+int LMPWM = 11; 
 Motor leftMotor(LM0, LM1, LMPWM);
 // setup for right motor
 int RM0 = 9;
@@ -119,6 +89,8 @@ DriveTrain robotDriveTrain(leftMotor, rightMotor, 200, 200);
 
 void setup()
 {
+
+
 }
 
 void loop()
@@ -127,7 +99,5 @@ void loop()
   robotDriveTrain.stop();
   robotDriveTrain.moveBackward(4200);
   // get stuck in loop so robot only moves once
-  while (true)
-  {
-  }
+  while(true) {}
 }
