@@ -49,8 +49,8 @@ class DriveTrain {
         leftMotor.rotate( true, lPower);  
         rightMotor.rotate( true, rPower);
         delay(distance);
-        leftMotor.stop();
         rightMotor.stop();
+        leftMotor.stop();
     }
 
     void moveBackward(int distance) {
@@ -82,6 +82,8 @@ class DriveTrain {
       delay(timeToTurn);
       stop();
     }
+
+    void s
 };
 
 // NEED TO IMPLEMENT ACTIVE PIN NUMBERS
@@ -97,8 +99,8 @@ int RM1 = 8;
 int RMPWM = 10;
 Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
-DriveTrain robotDriveTrain(leftMotor, rightMotor, 250, 250);
-
+DriveTrain robotDriveTrain(leftMotor, rightMotor, 215, 200);
+ 
 void setup()
 {
 
@@ -109,5 +111,11 @@ void loop()
 {
   
   // forever loop so code only gets executed once
+  // move 36 in forward
+  robotDriveTrain.moveForward(2000);
+  // rotate left 90 degrees
+  // move 24 in forwward
+  // rotate right 90 degrees
+  // move 36 in forward
   while(true) {}
 }
