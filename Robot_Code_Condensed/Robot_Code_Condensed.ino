@@ -28,10 +28,6 @@ class Motor{
     analogWrite(pwmPin, 0);            
   }
 
-  void decelerateToZero() {
-
-  }
-
   private:
     int  controlPin0;
     int controlPin1;
@@ -68,7 +64,23 @@ class DriveTrain {
     void stop() {
       leftMotor.stop();
       rightMotor.stop();
-      delay(1000);
+      delay(2500);
+    }
+
+    void rotate90DegreesLeft() {
+      int timeToTurn = 625;
+      leftMotor.rotate(false, 100);
+      rightMotor.rotate(true, 100);
+      delay(timeToTurn);
+      stop();
+    }
+
+    void rotate90DegreesRight() {
+      int timeToTurn = 625;
+      leftMotor.rotate(true, 100);
+      rightMotor.rotate(false, 100);
+      delay(timeToTurn);
+      stop();
     }
 };
 
@@ -85,7 +97,7 @@ int RM1 = 8;
 int RMPWM = 10;
 Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
-DriveTrain robotDriveTrain(leftMotor, rightMotor, 200, 200);
+DriveTrain robotDriveTrain(leftMotor, rightMotor, 250, 250);
 
 void setup()
 {
@@ -95,9 +107,7 @@ void setup()
 
 void loop()
 {
-  robotDriveTrain.moveForward(3600);
-  robotDriveTrain.stop();
-  robotDriveTrain.moveBackward(4200);
-  // get stuck in loop so robot only moves once
+  
+  // forever loop so code only gets executed once
   while(true) {}
 }
