@@ -66,7 +66,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesLeft() {
-      int timeToTurn = 650;
+      int timeToTurn = 258;
       leftMotor.rotate(true, 100);
       rightMotor.rotate(false, 100);
       delay(timeToTurn);
@@ -74,7 +74,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesRight() {
-      int timeToTurn = 650;
+      int timeToTurn = 258;
       leftMotor.rotate(false, 100);
       rightMotor.rotate(true, 100);
       delay(timeToTurn);
@@ -138,7 +138,7 @@ int RMPWM = 10;
 Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
 // ideal motor power ration is 215: 200
-DriveTrain robotDriveTrain(leftMotor, rightMotor, 215, 200);
+DriveTrain robotDriveTrain(leftMotor, rightMotor, 170, 170);
 // setup for the sensor
 int TP = 6;
 int EP = 5;
