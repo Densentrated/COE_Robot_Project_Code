@@ -46,15 +46,15 @@ class DriveTrain {
 
     void moveForward(int distance) {
         // move one motor forward
-        leftMotor.rotate( true, lPower);  
-        rightMotor.rotate( true, rPower);
+        leftMotor.rotate( false, lPower);  
+        rightMotor.rotate( false, rPower);
         delay(distance);
         stop();
     }
 
     void moveBackward(int distance) {
-        leftMotor.rotate(false, lPower);
-        rightMotor.rotate(false, rPower);
+        leftMotor.rotate(true, lPower);
+        rightMotor.rotate(true, rPower);
         delay(distance);
         stop();
     }
@@ -81,6 +81,16 @@ class DriveTrain {
       stop();
     }
 
+    void moveForwardIndefinitly() {
+      leftMotor.rotate(false, lPower);
+      rightMotor.rotate(false, rPower);
+    }
+
+    void moveBackwardIndefinitly() {
+      leftMotor.rotate(true, lPower);
+      rightMotor.rotate(true, rPower);
+    }
+
     /**
       * Might not be needed, us used to counteract the fact that the left motor stops beore the right one
     **/
@@ -90,29 +100,28 @@ class DriveTrain {
       rightMotor.rotate(false, 80);
       delay(timeToTurn);
       stop();
-
     }
-    float getDistance()
-{
-  //setup for distance sensor
-  const int Echopin = 2; 
-  const int Trigpin = 3; 
-  float distance = 0; 
-  float echoTime;                   //variable to store the time it takes for a ping to bounce off an object
-  float calculatedDistance;         //variable to store the distance calculated from the echo time
+};
 
-  //send out an ultrasonic pulse that's 10ms long
-  digitalWrite(TrigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TrigPin, LOW);
+class Sensor {
+  public: 
+    int triggerPin;
+    int echoPin;
 
-  echoTime = pulseIn(EchoPin, HIGH);      //use the pulsein command to see how long it takes for the
-                                          //pulse to bounce back to the sensor
+    Sensor(int tp, int ep) : triggerPin(tp), echoPin(ep) {}
 
-  calculatedDistance = echoTime / 148.0;  //calculate the distance of the object that reflected the pulse (half the bounce time multiplied by the speed of sound)
+    float getDistanceInInches() {
+      digitalWrite(triggerPin, LOW);
+      delayMicroseconds(5);
 
-  return calculatedDistance;              //send back the distance that was calculated
-}
+      digitalWrite(triggerPin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(triggerPin, LOW);
+
+      long duration = pulseIn(echoPin, HIGH);
+      float distanceInches = duration * 0.034 / 2 / 2.54;
+      return distanceInches;
+    }
 };
 
 // NEED TO IMPLEMENT ACTIVE PIN NUMBERS
@@ -130,10 +139,10 @@ Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
 // ideal motor power ration is 215: 200
 DriveTrain robotDriveTrain(leftMotor, rightMotor, 215, 200);
-
-
-
-
+// setup for the sensor
+int TP = 6;
+int EP = 5;
+Sensor robotSensor(TP, EP);
 
 // setup for the button
 int buttonPin = 7;
@@ -148,35 +157,51 @@ void setup()
   pinMode(RM0, OUTPUT);
   pinMode(RM1, OUTPUT);
   pinMode(RMPWM, OUTPUT);
-  pinMode(trigPin, OUTPUT);  
-  pinMode(echoPin, INPUT); 
+  pinMode(TP, OUTPUT);  
+  pinMode(EP, INPUT); 
 }
 
-int lastButtonState = digitalRead(buttonPin);
+// outside of the loop to keep track of button state
+int lastButtonState = HIGH;
 bool codeExecuted = false;
+
+// outside the loop to keep track of the robot
+bool pathFound = true;
+bool leftChecked = false;
+bool rightChecked = false;
+
 void loop()
 {
-distance = getDistance(); 
-/// input if statements for sensor actions. 
-
   int buttonState = digitalRead(buttonPin);
   if(lastButtonState == HIGH && buttonState == LOW) {
     if (!codeExecuted) {
-      // WRITE CODE IN HERE !!!!!
-    while (distance > 5 ){
-      digitalWrite(13,HIGH);
-  
-    }
-      // move 36 in forward
-      robotDriveTrain.moveForward(2300);
-      // rotate left 90 degrees
-      robotDriveTrain.rotate90DegreesLeft();
-      // move 24 in forwward
-      robotDriveTrain.moveForward(1100);
-      // rotate right 90 degrees
-      robotDriveTrain.rotate90DegreesRight();
-      // move 36 in forward
-      robotDriveTrain.moveForward(2300);
+      while (true) {
+        while (robotSensor.getDistanceInInches() > 5.0 && pathFound) {
+          robotDriveTrain.moveForwardIndefinitly();
+        } 
+        robotDriveTrain.stop();
+        pathFound = false;
+        if (!leftChecked) {
+          robotDriveTrain.rotate90DegreesLeft();
+          if (robotSensor.getDistanceInInches() > 5.0) {
+            pathFound = true;
+          } else {
+            leftChecked = true;
+          }
+        } else if (!rightChecked) {
+          robotDriveTrain.rotate90DegreesRight();
+          robotDriveTrain.rotate90DegreesRight();
+          if (robotSensor.getDistanceInInches() > 5.0) {
+            pathFound = true;
+            leftChecked = false;
+          } else {
+            rightChecked = true;
+          }
+        } else {
+          break;
+        }
+      }
+      robotDriveTrain.stop();
       codeExecuted = true;
     }
   }
