@@ -92,6 +92,27 @@ class DriveTrain {
       stop();
 
     }
+    float getDistance()
+{
+  //setup for distance sensor
+  const int Echopin = 2; 
+  const int Trigpin = 3; 
+  float distance = 0; 
+  float echoTime;                   //variable to store the time it takes for a ping to bounce off an object
+  float calculatedDistance;         //variable to store the distance calculated from the echo time
+
+  //send out an ultrasonic pulse that's 10ms long
+  digitalWrite(TrigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TrigPin, LOW);
+
+  echoTime = pulseIn(EchoPin, HIGH);      //use the pulsein command to see how long it takes for the
+                                          //pulse to bounce back to the sensor
+
+  calculatedDistance = echoTime / 148.0;  //calculate the distance of the object that reflected the pulse (half the bounce time multiplied by the speed of sound)
+
+  return calculatedDistance;              //send back the distance that was calculated
+}
 };
 
 // NEED TO IMPLEMENT ACTIVE PIN NUMBERS
@@ -110,27 +131,58 @@ Motor rightMotor(RM0, RM1, RMPWM);
 // ideal motor power ration is 215: 200
 DriveTrain robotDriveTrain(leftMotor, rightMotor, 215, 200);
 
+
+
+
+
 // setup for the button
 int buttonPin = 7;
  
 void setup()
 {
-  pinMode(buttonPin, INPUT);
+  Serial.begin (9600); 
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(LM0, OUTPUT);
+  pinMode(LM1, OUTPUT);
+  pinMode(LMPWM, OUTPUT);
+  pinMode(RM0, OUTPUT);
+  pinMode(RM1, OUTPUT);
+  pinMode(RMPWM, OUTPUT);
+  pinMode(trigPin, OUTPUT);  
+  pinMode(echoPin, INPUT); 
 }
 
+int lastButtonState = digitalRead(buttonPin);
+bool codeExecuted = false;
 void loop()
 {
-  if (digitalRead(buttonPin) == HIGH){
-    // forever loop so code only gets executed once
-    // move 36 in forward
-    robotDriveTrain.moveForward(2300);
-    // rotate left 90 degrees
-    robotDriveTrain.rotate90DegreesLeft();
-    // move 24 in forwward
-    robotDriveTrain.moveForward(1100);
-    // rotate right 90 degrees
-    robotDriveTrain.rotate90DegreesRight();
-    // move 36 in forward
-    robotDriveTrain.moveForward(2300);
+distance = getDistance(); 
+/// input if statements for sensor actions. 
+
+  int buttonState = digitalRead(buttonPin);
+  if(lastButtonState == HIGH && buttonState == LOW) {
+    if (!codeExecuted) {
+      // WRITE CODE IN HERE !!!!!
+    while (distance > 5 ){
+      digitalWrite(13,HIGH);
+  
+    }
+      // move 36 in forward
+      robotDriveTrain.moveForward(2300);
+      // rotate left 90 degrees
+      robotDriveTrain.rotate90DegreesLeft();
+      // move 24 in forwward
+      robotDriveTrain.moveForward(1100);
+      // rotate right 90 degrees
+      robotDriveTrain.rotate90DegreesRight();
+      // move 36 in forward
+      robotDriveTrain.moveForward(2300);
+      codeExecuted = true;
+    }
   }
+  if (buttonState == HIGH && lastButtonState == LOW) {
+    codeExecuted = false;
+  }
+  lastButtonState = buttonState;
+  digitalWrite(13, LOW);
 }
