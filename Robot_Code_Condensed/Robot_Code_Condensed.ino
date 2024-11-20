@@ -66,7 +66,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesLeft() {
-      int timeToTurn = 258;
+      int timeToTurn = 330;
       leftMotor.rotate(true, 100);
       rightMotor.rotate(false, 100);
       delay(timeToTurn);
@@ -74,7 +74,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesRight() {
-      int timeToTurn = 258;
+      int timeToTurn = 330;
       leftMotor.rotate(false, 100);
       rightMotor.rotate(true, 100);
       delay(timeToTurn);
@@ -138,7 +138,7 @@ int RMPWM = 10;
 Motor rightMotor(RM0, RM1, RMPWM);
 // setup for the drivetrain
 // ideal motor power ration is 215: 200
-DriveTrain robotDriveTrain(leftMotor, rightMotor, 170, 170);
+DriveTrain robotDriveTrain(leftMotor, rightMotor, 83, 80);
 // setup for the sensor
 int TP = 6;
 int EP = 5;
@@ -169,21 +169,23 @@ bool codeExecuted = false;
 bool pathFound = true;
 bool leftChecked = false;
 bool rightChecked = false;
+long distFromWall = 6.0;
 
 void loop()
 {
   int buttonState = digitalRead(buttonPin);
   if(lastButtonState == HIGH && buttonState == LOW) {
     if (!codeExecuted) {
+      delay(500);
       while (true) {
-        while (robotSensor.getDistanceInInches() > 5.0 && pathFound) {
+        while (robotSensor.getDistanceInInches() > distFromWall && pathFound) {
           robotDriveTrain.moveForwardIndefinitly();
         } 
         robotDriveTrain.stop();
         pathFound = false;
         if (!leftChecked) {
           robotDriveTrain.rotate90DegreesLeft();
-          if (robotSensor.getDistanceInInches() > 5.0) {
+          if (robotSensor.getDistanceInInches() > distFromWall) {
             pathFound = true;
           } else {
             leftChecked = true;
@@ -191,7 +193,7 @@ void loop()
         } else if (!rightChecked) {
           robotDriveTrain.rotate90DegreesRight();
           robotDriveTrain.rotate90DegreesRight();
-          if (robotSensor.getDistanceInInches() > 5.0) {
+          if (robotSensor.getDistanceInInches() > distFromWall) {
             pathFound = true;
             leftChecked = false;
           } else {
@@ -201,7 +203,7 @@ void loop()
           break;
         }
       }
-      robotDriveTrain.stop();
+      robotDriveTrain.stop(); 
       codeExecuted = true;
     }
   }
