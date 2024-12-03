@@ -66,7 +66,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesLeft() {
-      int timeToTurn = 330;
+      int timeToTurn = 900;
       leftMotor.rotate(true, 100);
       rightMotor.rotate(false, 100);
       delay(timeToTurn);
@@ -74,7 +74,7 @@ class DriveTrain {
     }
 
     void rotate90DegreesRight() {
-      int timeToTurn = 330;
+      int timeToTurn = 900;
       leftMotor.rotate(false, 100);
       rightMotor.rotate(true, 100);
       delay(timeToTurn);
